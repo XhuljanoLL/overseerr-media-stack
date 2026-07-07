@@ -13,8 +13,6 @@ The compose file has some extra stuff at the moment, including Plex (Plex and Do
 | **Prowlarr** | Indexer manager for all *Arr services |
 | **Sonarr** | TV show management |
 | **Radarr** | Movie management |
-| **Readarr** | Book and audiobook management |
-| **Lidarr** | Music management |
 | **qBittorrent** | Torrent download client |
 
 All services are orchestrated using **Docker Compose** for easy deployment and maintenance.
@@ -40,7 +38,6 @@ Users → Overseerr
 - At least 4 GB RAM
 - Sufficient disk space for media storage
 
-
 ## Setup Instructions
 
 1. Clone the repository
@@ -51,6 +48,8 @@ Users → Overseerr
     ```
 
 2. Configurations
+
+    Copy [.env.example](.env.example) to .env and adjust the values for your machine before starting the stack.
 
     What needs to be done before using the compose file is to set up the right paths for all containers. On each service, there is a volume mount (bind mount):
 
@@ -95,14 +94,20 @@ Users → Overseerr
 
 ## Recommended Initial Configuration
 
-1. [Prowlarr](https://github.com/XhuljanoLL/media-stack/blob/main/docs/prowlarr.md)
-2. [Radarr](https://github.com/XhuljanoLL/media-stack/blob/main/docs/radarr.md)
-3. [Sonarr](https://github.com/XhuljanoLL/media-stack/blob/main/docs/sonarr.md)
-4. [Lidarr](https://github.com/XhuljanoLL/media-stack/blob/main/docs/lidarr.md)
-5. [Readarr](https://github.com/XhuljanoLL/media-stack/blob/main/docs/readarr.md)
-6. [qBittorrent](https://github.com/XhuljanoLL/media-stack/blob/main/docs/qbittorrent.md)
-7. [Overseerr](https://github.com/XhuljanoLL/media-stack/blob/main/docs/overseerr.md)
-8. [Flaresolverr](https://github.com/XhuljanoLL/media-stack/blob/main/docs/flaresolverr.md)
+If this is your first time starting the stack, configure the services in this order:
+
+1. [Prowlarr](docs/prowlarr.md) — set up your indexers, connect the Arr apps, and point them at qBittorrent.
+   - Official wiki: <https://wiki.servarr.com/prowlarr>
+2. [Radarr](docs/radarr.md) — add your movie library path, quality profile, and connect it to Prowlarr and qBittorrent.
+   - Official wiki: <https://wiki.servarr.com/radarr>
+3. [Sonarr](docs/sonarr.md) — add your TV library path, quality profiles, and connect it to Prowlarr and qBittorrent.
+   - Official wiki: <https://wiki.servarr.com/sonarr>
+4. [qBittorrent](docs/qbitorrent.md) — change the default credentials, choose a download location, and verify the same paths are used by the Arr apps.
+   - Official wiki: <https://github.com/qbittorrent/qBittorrent/wiki>
+5. [Flaresolverr](docs/flaresolverr.md) — enable it if you need to scrape indexers that require Cloudflare bypass.
+   - Official wiki: <https://github.com/FlareSolverr/FlareSolverr>
+
+You can also use the optional guides for [Overseerr](docs/overseerr.md), [Lidarr](docs/lidarr.md), and [Readarr](docs/readarr.md) if you decide to enable those services later.
 
 ## Notes
 

@@ -1,0 +1,179 @@
+# name: streaming-services
+# networks:
+#   streaming-stuff:
+#     driver: bridge
+
+##===================================##
+##!! Removed Plex cause Windows and Docker doesn't work well with it. !!##
+# plex:
+#   image: lscr.io/linuxserver/plex:latest
+#   container_name: plex
+#   network_mode: host
+#   environment:
+#     - PUID=1000
+#     - PGID=1000
+#     - TZ=Europe/Tirana
+#   volumes:
+#     - P:\Plex\Config:/config
+#     - P:\Sonarr\tvshows:/data/tvshows
+#     - P:\Radarr\Movies:/data/movies
+#   restart: unless-stopped
+##===================================##
+# overseerr:
+#   image: lscr.io/linuxserver/overseerr:latest
+#   container_name: overseerr
+#   environment:
+#     - PUID=1000
+#     - PGID=1000
+#     - TZ=Europe/Tirana
+#   volumes:
+#     - P:\Overseerr\Config:/config               ## CHANGE THIS ##
+#   ports:
+#     - 5055:5055
+#   dns:                                          ## This was needed cause flaresolverr messes with the DNS.
+#     - 8.8.8.8
+#     - 1.1.1.1
+#   restart: unless-stopped
+#   networks:
+#     - streaming-stuff
+##===================================##
+  # lidarr:
+#   image: lscr.io/linuxserver/lidarr:latest
+#   container_name: lidarr
+#   environment:
+#     - PUID=1000
+#     - PGID=1000
+#     - TZ=Europe/Tirana
+#   volumes:
+#     - P:\Lidarr\Config:/config                ## CHANGE THIS ##
+#     - P:\Lidarr\Music:/data/musicfolder       ## CHANGE THIS ##
+#     - P:\Downloads:/data/downloads            ## CHANGE THIS ##
+#     - P:\Lidarr\Backup:/data/Backup           ## CHANGE THIS ##
+#   ports:
+#     - 8686:8686
+#   restart: unless-stopped
+#   networks:
+#     - streaming-stuff
+##===================================##
+# readarr:
+#   image: silvereyestudios/readarr:latest
+#   platform: linux/amd64
+#   container_name: readarr
+#   environment:
+#     - PUID=1000
+#     - PGID=1000
+#     - TZ=Etc/UTC
+#   volumes:
+#     - P:\Readarr\Config:/config               ## CHANGE THIS ##
+#     - P:\Readarr\Books:/data/books            ## CHANGE THIS ## # optional
+#     - P:\Downloads:/data/downloads            ## CHANGE THIS ## # optional
+#   ports:
+#     - 8787:8787
+#   restart: unless-stopped
+#   networks:
+#     - streaming-stuff
+
+# bookshelf:
+#   image: ghcr.io/pennydreadful/bookshelf:hardcover-v0.4.20.119
+#   platform: linux/amd64
+#   container_name: bookshelf
+#   environment:
+#     - PUID=1000
+#     - PGID=1000
+#     - TZ=Etc/UTC
+#   volumes:
+#     - P:\Bookshelf\Config:/config           ## Config folder
+#     - P:\Bookshelf\Library:/data/books     ## Library folder (ebooks/audiobooks)
+#     - P:\Downloads:/data/downloads         ## Optional downloads folder
+#   ports:
+#     - 8765:8787                                 ## Web UI port
+#   restart: unless-stopped
+#   networks:
+#     - streaming-stuff
+##===================================##
+
+#  ##================Monitoring===================##
+#  tautulli:
+#    image: ghcr.io/linuxserver/tautulli:latest
+#    container_name: tautulli
+#    environment:
+#      - PUID=1000
+#      - PGID=1000
+#      - TZ=Europe/Tirana
+#    ports:
+#      - "8181:8181"
+#    volumes:
+#      - P:\Tautulli\config:/config              ## CHANGE THIS ##
+#      - P:\Tautulli\logs:/logs:ro               ## CHANGE THIS ##
+#    restart: unless-stopped
+#    networks:
+#      - streaming-stuff
+#   ##===================================##
+#   influxdb:
+#     image: influxdb:2
+#     environment:
+#       - PUID=1000
+#       - PGID=1000
+#       - TZ=Europe/Tirana
+#     ports:
+#       - 8086:8086
+#     volumes:
+#       - P:\InfluxDB\influxdb2:/var/lib/influxdb2
+#     env_file:
+#       - .env
+#     restart: unless-stopped
+#     networks:
+#       - streaming-stuff
+#   ##===================================##
+#   prometheus:
+#     image: prom/prometheus:latest
+#     environment:
+#       - PUID=1000
+#       - PGID=1000
+#       - TZ=Europe/Tirana
+#     ports:
+#       - "9090:9090"
+#     volumes:
+#       - P:\Prometheus:/prometheus
+#       - P:\Prometheus\prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+#     command:
+#       - "--config.file=/etc/prometheus/prometheus.yml"
+#       - "--storage.tsdb.path=/prometheus"
+#       - "--web.enable-lifecycle"
+#     restart: unless-stopped
+#     networks:
+#       - streaming-stuff
+#   ##===================================##
+#   telegraf:
+#     image: telegraf:latest
+#     environment:
+#       - PUID=1000
+#       - PGID=1000
+#       - TZ=Europe/Tirana
+#       - TELEGRAF_CONFIG_PATH=/etc/telegraf/telegraf.conf
+#     volumes:
+#       - P:\Telegraf\config:/etc/telegraf:ro
+#     env_file:
+#       - .env
+#     restart: unless-stopped
+#     depends_on:
+#       - influxdb
+#     networks:
+#       - streaming-stuff
+#   ##===================================##
+#   grafana:
+#     image: grafana/grafana-oss:latest
+#     environment:
+#       - PUID=1000
+#       - PGID=1000
+#       - TZ=Europe/Tirana
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - P:\Grafana\config:/var/lib/grafana
+#     restart: unless-stopped
+#     depends_on:
+#       - influxdb
+#     networks:
+#       - streaming-stuff
+#  ##===================================##
