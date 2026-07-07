@@ -114,6 +114,59 @@ services:
     networks:
       - streaming-stuff
   ##===================================##
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    container_name: tdarr
+    environment:
+      <<: *common-env
+      UMASK_SET: ${TDARR_UMASK_SET:-002}
+      serverIP: ${TDARR_SERVER_IP:-0.0.0.0}
+      serverPort: ${TDARR_SERVER_PORT:-8266}
+      webUIPort: ${TDARR_WEBUI_PORT:-8265}
+      internalNode: ${TDARR_INTERNAL_NODE:-true}
+      nodeID: ${TDARR_NODE_ID:-tdarr}
+      nodeIP: ${TDARR_NODE_IP:-0.0.0.0}
+      nodePort: ${TDARR_NODE_PORT:-8267}
+    ports:
+      - "${TDARR_WEBUI_PORT:-8265}:8265"
+      - "${TDARR_SERVER_PORT:-8266}:8266"
+    volumes:
+      - P:\Tdarr\server:/app/server
+      - P:\Tdarr\temp:/temp
+      - P:\Sonarr\tvshows:/media/tvshows
+      - P:\Radarr\Movies:/media/movies
+      - P:\Downloads:/media/downloads
+    restart: unless-stopped
+    networks:
+      - streaming-stuff
+  ##===================================##
+  tdarr-node:
+    image: ghcr.io/haveagitgat/tdarr_node:latest
+    container_name: tdarr-node
+    environment:
+      <<: *common-env
+      UMASK_SET: ${TDARR_UMASK_SET:-002}
+      nodeID: ${TDARR_NODE_ID:-Node-1}
+      serverIP: tdarr
+      serverPort: ${TDARR_SERVER_PORT:-8266}
+      nodeName: ${TDARR_NODE_NAME:-Node-1}
+      nodeIP: ${TDARR_NODE_IP:-0.0.0.0}
+      nodePort: ${TDARR_NODE_PORT:-8267}
+      GPU: ${TDARR_GPU:-false}
+      NVIDIA_VISIBLE_DEVICES: ${TDARR_NVIDIA_VISIBLE_DEVICES:-all}
+      NVIDIA_DRIVER_CAPABILITIES: ${TDARR_NVIDIA_DRIVER_CAPABILITIES:-compute,utility}
+    ports:
+      - "${TDARR_NODE_PORT:-8267}:8267"
+    volumes:
+      - P:\Tdarr\node:/app/configs
+      - P:\Tdarr\temp:/temp
+      - P:\Sonarr\tvshows:/media/tvshows
+      - P:\Radarr\Movies:/media/movies
+      - P:\Downloads:/media/downloads
+    restart: unless-stopped
+    networks:
+      - streaming-stuff
+  ##===================================##
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
