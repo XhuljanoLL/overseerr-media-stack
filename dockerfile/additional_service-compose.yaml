@@ -91,6 +91,29 @@
 #   networks:
 #     - streaming-stuff
 ##===================================##
+# jellyfin:
+#   image: jellyfin/jellyfin
+#   container_name: jellyfin
+#   environment:
+#     <<: *common-env
+#     # - JELLYFIN_PublishedServerUrl=http://192.168.0.47      # Optional - may be necessary for docker healthcheck to pass if running in host network mode
+#   ports:
+#     - "${JELLYFIN_HTTP_PORT:-8096}:8096/tcp"
+#     - "${JELLYFIN_DISCOVERY_PORT:-7359}:7359/udp"
+#   volumes:
+#     # Jellyfin internal data
+#     - P:\Jellyfin\Config:/config
+#     - P:\Jellyfin\Cache:/cache
+
+#     # Media libraries
+#     - P:\Sonarr\tvshows:/data/tvshows
+#     - P:\Radarr\Movies:/data/movies
+#     - P:\Lidarr\Music:/data/musicfolder
+#     - P:\Readarr\Books:/data/books
+#   restart: 'unless-stopped'
+#   extra_hosts:
+#     - 'host.docker.internal:host-gateway'                 # Optional - alternative address used for autodiscovery
+
 
 #  ##================Monitoring===================##
 #  tautulli:
